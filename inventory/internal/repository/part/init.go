@@ -2,12 +2,25 @@ package part
 
 import (
 	repoModel "boilerplates/inventory/internal/repository/model"
+	"context"
+	"fmt"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func ptr[T any](v T) *T { return &v }
 
-func (r *repository) initParts() {
+func (r *repository) InitParts(ctx context.Context) error {
+	count, err := r.collection.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return fmt.Errorf("count parts: %w", err)
+	}
+
+	if count > 0 {
+		return nil
+	}
+
 	now := time.Now()
 	parts := []repoModel.Part{
 		{
@@ -57,8 +70,14 @@ func (r *repository) initParts() {
 		},
 	}
 
-	for _, part := range parts {
-		r.data[part.UUID] = part
+	docs := make([]any, 0, len(parts))
+	for _, p := range parts {
+		docs = append(docs, p)
 	}
+	_, err = r.collection.InsertMany(ctx, docs)
+	if err != nil {
+		return fmt.Errorf("insert parts: %w", err)
+	}
+	return nil
 
 }

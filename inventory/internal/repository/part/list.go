@@ -5,55 +5,56 @@ import (
 	"boilerplates/inventory/internal/repository/converter"
 	repoModel "boilerplates/inventory/internal/repository/model"
 	"context"
-	"slices"
+	"fmt"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func (r *repository) List(ctx context.Context, filter model.PartsFilter) ([]model.Part, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
 
-	res := make([]model.Part, 0, len(r.data))
-	for _, part := range r.data {
-		if !matches(part, filter) {
-			continue
-		}
-		res = append(res, converter.PartToModel(part))
+	query := buildFilter(filter)
+
+	cursor, err := r.collection.Find(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("find parts: %w", err)
 	}
+
+	defer func() {
+		_ = cursor.Close(ctx)
+	}()
+
+	var parts []repoModel.Part
+	err = cursor.All(ctx, &parts)
+	if err != nil {
+		return nil, fmt.Errorf("decode parts: %w", err)
+	}
+
+	res := make([]model.Part, 0, len(parts))
+	for _, p := range parts {
+		res = append(res, converter.PartToModel(p))
+	}
+
 	return res, nil
 }
 
-func matches(part repoModel.Part, filter model.PartsFilter) bool {
+func buildFilter(f model.PartsFilter) bson.M {
 
-	if len(filter.UUIDs) > 0 && !slices.Contains(filter.UUIDs, part.UUID) {
-		return false
+	query := bson.M{}
+
+	if len(f.UUIDs) > 0 {
+		query["_id"] = bson.M{"$in": f.UUIDs}
 	}
-
-	if len(filter.Names) > 0 && !slices.Contains(filter.Names, part.Name) {
-		return false
+	if len(f.Names) > 0 {
+		query["name"] = bson.M{"$in": f.Names}
 	}
-
-	if len(filter.Categories) > 0 && !slices.Contains(filter.Categories, model.Category(part.Category)) {
-		return false
+	if len(f.Categories) > 0 {
+		query["category"] = bson.M{"$in": f.Categories}
 	}
-
-	if len(filter.ManufacturerCountries) > 0 && (part.Manufacturer == nil || !slices.Contains(filter.ManufacturerCountries, part.Manufacturer.Country)) {
-		return false
+	if len(f.ManufacturerCountries) > 0 {
+		query["manufacturer.country"] = bson.M{"$in": f.ManufacturerCountries}
 	}
-
-	if len(filter.Tags) > 0 && !containTags(part.Tags, filter.Tags) {
-		return false
+	if len(f.Tags) > 0 {
+		query["tags"] = bson.M{"$in": f.Tags}
 	}
-
-	return true
-}
-
-func containTags(partTags, filterTags []string) bool {
-	for _, v := range partTags {
-		if slices.Contains(filterTags, v) {
-			return true
-		}
-
-	}
-	return false
-
+	return query
 }

@@ -3,22 +3,22 @@ package part
 // имя папки
 
 import (
+	"go.mongodb.org/mongo-driver/mongo"
+
 	def "boilerplates/inventory/internal/repository"
-	repoModel "boilerplates/inventory/internal/repository/model"
-	"sync"
 )
 
 // Компилятор проверит, что все методы интерфейса на месте
 var _ def.PartRepository = (*repository)(nil)
 
+const partsCollection = "parts"
+
 type repository struct {
-	mu   sync.RWMutex
-	data map[string]repoModel.Part
+	collection *mongo.Collection
 }
 
-func NewRepository() *repository {
-
-	repo := &repository{data: make(map[string]repoModel.Part)}
-	repo.initParts() // тестовые данные
-	return repo
+func NewRepository(db *mongo.Database) *repository {
+	return &repository{
+		collection: db.Collection(partsCollection),
+	}
 }
