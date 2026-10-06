@@ -3,20 +3,36 @@ package order
 import (
 	"boilerplates/order/internal/model"
 	"boilerplates/order/internal/repository/converter"
+	"fmt"
 
-	//"boilerplates/order/internal/repository/model"
 	"context"
 )
 
 func (r *repository) Update(ctx context.Context, order model.Order) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	repoOrder := converter.OrderToRepoModel(order)
 
-	if _, ok := r.data[order.OrderUUID]; !ok {
-		return model.ErrOrderNotFound
+	const query = `
+	UPDATE orders
+		SET status           = $2,
+		    transaction_uuid = $3,
+		    payment_method   = $4,
+		    updated_at       = now()
+		WHERE order_uuid = $1`
+
+	tag, err := r.pool.Exec(ctx, query,
+		repoOrder.OrderUUID,
+		repoOrder.Status,
+		repoOrder.TransactionUUID,
+		repoOrder.PaymentMethod,
+	)
+
+	if err != nil {
+		return fmt.Errorf("update order: %w", err)
 	}
 
-	r.data[order.OrderUUID] = converter.OrderToRepoModel(order)
+	if tag.RowsAffected() == 0 {
+		return model.ErrOrderNotFound
+	}
 
 	return nil
 }

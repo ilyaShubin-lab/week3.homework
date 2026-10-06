@@ -1,15 +1,17 @@
 package order
 
 import (
-	repoModel "boilerplates/order/internal/repository/model"
-	"sync"
+	def "boilerplates/order/internal/repository"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+var _ def.OrderRepository = (*repository)(nil)
+
 type repository struct {
-	mu   sync.RWMutex
-	data map[string]repoModel.Order
+	pool *pgxpool.Pool
 }
 
-func NewRepository() *repository {
-	return &repository{data: make(map[string]repoModel.Order)}
+func NewRepository(pool *pgxpool.Pool) *repository {
+	return &repository{pool: pool}
 }

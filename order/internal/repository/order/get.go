@@ -3,19 +3,40 @@ package order
 import (
 	"boilerplates/order/internal/model"
 	"boilerplates/order/internal/repository/converter"
+	"errors"
+	"fmt"
 
 	//"boilerplates/order/internal/repository/model"
+	repoModel "boilerplates/order/internal/repository/model"
 	"context"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func (r *repository) Get(ctx context.Context, orderUUID string) (model.Order, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
 
-	order, ok := r.data[orderUUID]
-	if !ok {
-		return model.Order{}, model.ErrOrderNotFound
+	const query = `
+		SELECT order_uuid, user_uuid, part_uuids, total_price,
+		       transaction_uuid, payment_method, status
+		FROM orders
+		WHERE order_uuid = $1`
+
+	var o repoModel.Order
+
+	err := r.pool.QueryRow(ctx, query, orderUUID).Scan(
+		&o.OrderUUID,
+		&o.UserUUID,
+		&o.PartUUIDs,
+		&o.TotalPrice,
+		&o.TransactionUUID,
+		&o.PaymentMethod,
+		&o.Status,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return model.Order{}, model.ErrOrderNotFound
+		}
+		return model.Order{}, fmt.Errorf("select order: %w", err)
 	}
-
-	return converter.OrderToModel(order), nil
+	return converter.OrderToModel(o), nil
 }
