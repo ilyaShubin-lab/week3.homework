@@ -1,10 +1,11 @@
 package v1
 
 import (
-	"boilerplates/order/internal/model"
-	orderV1 "boilerplates/shared/pkg/openapi/order/v1"
 	"context"
 	"errors"
+
+	"boilerplates/order/internal/model"
+	orderV1 "boilerplates/shared/pkg/openapi/order/v1"
 )
 
 func (a *api) CancelOrder(ctx context.Context, params orderV1.CancelOrderParams) (orderV1.CancelOrderRes, error) {

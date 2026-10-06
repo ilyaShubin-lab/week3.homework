@@ -1,12 +1,12 @@
 package order
 
 import (
-	"boilerplates/order/internal/model"
 	"context"
+
+	"boilerplates/order/internal/model"
 )
 
 func (s *service) Pay(ctx context.Context, orderUUID string, method model.PaymentMethod) (string, error) {
-
 	order, err := s.orderRepository.Get(ctx, orderUUID)
 	if err != nil {
 		return "", err

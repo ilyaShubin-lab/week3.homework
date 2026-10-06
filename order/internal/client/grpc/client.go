@@ -1,8 +1,9 @@
 package grpc
 
 import (
-	"boilerplates/order/internal/model"
 	"context"
+
+	"boilerplates/order/internal/model"
 )
 
 type InventoryClient interface {

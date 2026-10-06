@@ -2,7 +2,6 @@ package order
 
 import (
 	"boilerplates/order/internal/model"
-
 	"github.com/stretchr/testify/mock"
 )
 
@@ -15,7 +14,7 @@ func (s *ServiceSuite) TestCancelSuccess() {
 		})).
 		Return(nil)
 
-	err := s.service.Cancel(s.ctx, "order-1")
+	err := s.service.Cancel(s.T().Context(), "order-1")
 
 	s.Require().NoError(err)
 }
@@ -25,7 +24,7 @@ func (s *ServiceSuite) TestCancelOrderNotFound() {
 		Get(mock.Anything, "unknown").
 		Return(model.Order{}, model.ErrOrderNotFound)
 
-	err := s.service.Cancel(s.ctx, "unknown")
+	err := s.service.Cancel(s.T().Context(), "unknown")
 
 	s.Require().ErrorIs(err, model.ErrOrderNotFound)
 }
@@ -38,7 +37,7 @@ func (s *ServiceSuite) TestCancelPaidOrder() {
 
 	// Update не настроен — оплаченный заказ трогать нельзя.
 
-	err := s.service.Cancel(s.ctx, "order-1")
+	err := s.service.Cancel(s.T().Context(), "order-1")
 
 	s.Require().ErrorIs(err, model.ErrOrderAlreadyPaid)
 }
@@ -49,7 +48,7 @@ func (s *ServiceSuite) TestCancelAlreadyCancelled() {
 
 	s.orderRepository.EXPECT().Get(mock.Anything, "order-1").Return(order, nil)
 
-	err := s.service.Cancel(s.ctx, "order-1")
+	err := s.service.Cancel(s.T().Context(), "order-1")
 
 	s.Require().ErrorIs(err, model.ErrOrderCancelled)
 }

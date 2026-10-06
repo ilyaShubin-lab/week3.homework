@@ -5,10 +5,6 @@ import (
 	repoModel "boilerplates/inventory/internal/repository/model"
 )
 
-// == ПРИМЕР ==
-//func XToModel(x repoModel.X) model.X
-// == repo -> domain ==
-
 func PartToModel(part repoModel.Part) model.Part {
 	return model.Part{
 		UUID:          part.UUID,
@@ -36,7 +32,6 @@ func PartsToModel(parts []repoModel.Part) []model.Part {
 }
 
 func DimensionsToModel(dimensions *repoModel.Dimensions) *model.Dimensions {
-
 	if dimensions == nil {
 		return nil
 	}
@@ -50,7 +45,6 @@ func DimensionsToModel(dimensions *repoModel.Dimensions) *model.Dimensions {
 }
 
 func ManufacturerToModel(manufacturer *repoModel.Manufacturer) *model.Manufacturer {
-
 	if manufacturer == nil {
 		return nil
 	}

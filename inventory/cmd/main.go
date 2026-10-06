@@ -2,26 +2,32 @@ package main
 
 import (
 	"context"
+	"fmt" // ← новый: для fmt.Errorf
 	"log"
 	"net"
 	"os"
 	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-
 	inventoryV1API "boilerplates/inventory/internal/api/inventory/v1"
 	partRepository "boilerplates/inventory/internal/repository/part"
 	partService "boilerplates/inventory/internal/service/part"
 	inventoryV1 "boilerplates/shared/pkg/proto/inventory/v1"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 const grpcPort = "50051"
 
 func main() {
+	if err := run(); err != nil {
+		log.Fatalf("inventory service: %v", err)
+	}
+}
 
+func run() error {
 	ctx := context.Background()
 	mongoURI := getEnv("MONGO_URI",
 		"mongodb://inventory-service-user:inventory-service-password@localhost:27017/?authSource=admin")
@@ -30,12 +36,12 @@ func main() {
 	// --- подключение к Mongo
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
 	if err != nil {
-		log.Fatalf("mongo connect: %v", err)
+		return fmt.Errorf("mongo connect: %w", err)
 	}
 	defer func() {
-		err := client.Disconnect(ctx)
-		if err != nil {
-			log.Printf("mongo disconnect: %v", err)
+		closeErr := client.Disconnect(ctx)
+		if closeErr != nil {
+			log.Printf("mongo disconnect: %v", closeErr)
 		}
 	}()
 
@@ -43,7 +49,7 @@ func main() {
 	defer cancel()
 	err = client.Ping(pingCtx, nil)
 	if err != nil {
-		log.Fatalf("mongo ping: %v", err)
+		return fmt.Errorf("mongo ping: %w", err)
 	}
 	log.Println("connected to MongoDB")
 
@@ -51,7 +57,7 @@ func main() {
 	repo := partRepository.NewRepository(client.Database(mongoDB))
 	err = repo.InitParts(ctx)
 	if err != nil {
-		log.Fatalf("init parts: %v", err)
+		return fmt.Errorf("init parts: %w", err)
 	}
 	// --- бизнес-логика
 	svc := partService.NewService(repo)
@@ -60,7 +66,7 @@ func main() {
 	// --- сеть
 	lis, err := net.Listen("tcp", ":"+grpcPort)
 	if err != nil {
-		log.Fatalf("listen: %v", err)
+		return fmt.Errorf("listen: %w", err)
 	}
 
 	s := grpc.NewServer()
@@ -72,10 +78,8 @@ func main() {
 	reflection.Register(s)
 
 	log.Printf("gRPC server listening on :%s", grpcPort)
-	err = s.Serve(lis)
-	if err != nil {
-		log.Fatalf("serve: %v", err)
-	}
+	// Serve блокируется, пока сервер работает. Если упадёт — ошибка уйдёт в main.
+	return s.Serve(lis)
 }
 
 func getEnv(key, fallback string) string {

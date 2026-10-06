@@ -1,10 +1,11 @@
 package v1
 
 import (
+	"context"
+
 	"boilerplates/order/internal/client/converter"
 	"boilerplates/order/internal/model"
 	inventoryV1 "boilerplates/shared/pkg/proto/inventory/v1"
-	"context"
 )
 
 func (c *client) ListParts(ctx context.Context, filter model.PartsFilter) ([]model.Part, error) {

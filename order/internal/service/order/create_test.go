@@ -2,7 +2,6 @@ package order
 
 import (
 	"boilerplates/order/internal/model"
-
 	"github.com/stretchr/testify/mock"
 )
 
@@ -17,7 +16,7 @@ func (s *ServiceSuite) TestCreateSuccess() {
 		Create(mock.Anything, mock.Anything).
 		Return(nil)
 
-	order, err := s.service.Create(s.ctx, "user-1", partUUIDs)
+	order, err := s.service.Create(s.T().Context(), "user-1", partUUIDs)
 
 	s.Require().NoError(err)
 	s.Require().Equal(float64(150), order.TotalPrice)
@@ -29,7 +28,7 @@ func (s *ServiceSuite) TestCreatePartsNotFound() {
 	s.inventoryClient.EXPECT().ListParts(mock.Anything, mock.Anything).
 		Return([]model.Part{{UUID: "p1", Price: 100}}, nil)
 
-	_, err := s.service.Create(s.ctx, "user-1", []string{"p1", "p2"})
+	_, err := s.service.Create(s.T().Context(), "user-1", []string{"p1", "p2"})
 
 	s.Require().ErrorIs(err, model.ErrPartsNotFound)
 }

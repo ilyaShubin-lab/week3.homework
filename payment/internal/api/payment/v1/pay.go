@@ -1,17 +1,16 @@
 package v1
 
 import (
-	"boilerplates/payment/internal/model"
-	paymentv1 "boilerplates/shared/pkg/proto/payment/v1"
 	"context"
 	"errors"
 
+	"boilerplates/payment/internal/model"
+	paymentv1 "boilerplates/shared/pkg/proto/payment/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func (a *api) PayOrder(ctx context.Context, req *paymentv1.PayOrderRequest) (*paymentv1.PayOrderResponse, error) {
-
 	transactionUUID, err := a.paymentService.Pay(ctx, req.GetOrderUuid(),
 		req.GetUserUuid(), req.GetPaymentMethod().String(),
 	)

@@ -1,12 +1,12 @@
 package v1
 
 import (
-	"boilerplates/inventory/internal/converter"
-	"boilerplates/inventory/internal/model"
-	inventoryv1 "boilerplates/shared/pkg/proto/inventory/v1"
 	"context"
 	"errors"
 
+	"boilerplates/inventory/internal/converter"
+	"boilerplates/inventory/internal/model"
+	inventoryv1 "boilerplates/shared/pkg/proto/inventory/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

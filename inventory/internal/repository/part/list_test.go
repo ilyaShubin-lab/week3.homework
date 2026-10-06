@@ -3,10 +3,9 @@ package part
 import (
 	"testing"
 
+	"boilerplates/inventory/internal/model"
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson"
-
-	"boilerplates/inventory/internal/model"
 )
 
 func TestBuildFilter(t *testing.T) {
@@ -21,7 +20,6 @@ func TestBuildFilter(t *testing.T) {
 			want:   bson.M{},
 		},
 		{
-
 			filter: model.PartsFilter{UUIDs: []string{}, Tags: []string{}},
 			want:   bson.M{},
 		},
@@ -41,7 +39,6 @@ func TestBuildFilter(t *testing.T) {
 			want:   bson.M{"category": bson.M{"$in": []model.Category{model.CategoryEngine, model.CategoryPorthole}}},
 		},
 		{
-
 			name:   "страна производителя через manufacturer.country",
 			filter: model.PartsFilter{ManufacturerCountries: []string{"Россия"}},
 			want:   bson.M{"manufacturer.country": bson.M{"$in": []string{"Россия"}}},
@@ -52,7 +49,6 @@ func TestBuildFilter(t *testing.T) {
 			want:   bson.M{"tags": bson.M{"$in": []string{"бак", "обзор"}}},
 		},
 		{
-
 			name: "несколько условий объединяются",
 			filter: model.PartsFilter{
 				Names: []string{"Иллюминатор бронированный"},
@@ -66,7 +62,6 @@ func TestBuildFilter(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-
 		t.Run(tt.name, func(t *testing.T) {
 			got := buildFilter(tt.filter)
 

@@ -1,18 +1,15 @@
 package order
 
 import (
-	"context"
 	"testing"
-
-	"github.com/stretchr/testify/suite"
 
 	clientMocks "boilerplates/order/internal/client/grpc/mocks"
 	repoMocks "boilerplates/order/internal/repository/mocks"
+	"github.com/stretchr/testify/suite"
 )
 
 type ServiceSuite struct {
 	suite.Suite
-	ctx context.Context
 
 	orderRepository *repoMocks.MockOrderRepository
 	inventoryClient *clientMocks.MockInventoryClient
@@ -22,7 +19,6 @@ type ServiceSuite struct {
 }
 
 func (s *ServiceSuite) SetupTest() {
-	s.ctx = context.Background()
 	s.orderRepository = repoMocks.NewMockOrderRepository(s.T())
 	s.inventoryClient = clientMocks.NewMockInventoryClient(s.T())
 	s.paymentClient = clientMocks.NewMockPaymentClient(s.T())

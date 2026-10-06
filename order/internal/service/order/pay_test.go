@@ -1,9 +1,9 @@
 package order
 
 import (
-	"boilerplates/order/internal/model"
 	"errors"
 
+	"boilerplates/order/internal/model"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -36,7 +36,7 @@ func (s *ServiceSuite) TestPaySuccess() {
 		})).
 		Return(nil)
 
-	res, err := s.service.Pay(s.ctx, "order-1", model.PaymentMethodCard)
+	res, err := s.service.Pay(s.T().Context(), "order-1", model.PaymentMethodCard)
 
 	s.Require().NoError(err)
 	s.Require().Equal(txUUID, res)
@@ -49,7 +49,7 @@ func (s *ServiceSuite) TestPayOrderNotFound() {
 
 	// Ни payment, ни Update не настроены — до них дойти не должно.
 
-	_, err := s.service.Pay(s.ctx, "unknown", model.PaymentMethodCard)
+	_, err := s.service.Pay(s.T().Context(), "unknown", model.PaymentMethodCard)
 
 	s.Require().ErrorIs(err, model.ErrOrderNotFound)
 }
@@ -63,7 +63,7 @@ func (s *ServiceSuite) TestPayAlreadyPaid() {
 	// Самое важное в этом тесте: paymentClient НЕ настроен.
 	// Если сервис всё-таки спишет деньги второй раз — падение.
 
-	_, err := s.service.Pay(s.ctx, "order-1", model.PaymentMethodCard)
+	_, err := s.service.Pay(s.T().Context(), "order-1", model.PaymentMethodCard)
 
 	s.Require().ErrorIs(err, model.ErrOrderAlreadyPaid)
 }
@@ -74,7 +74,7 @@ func (s *ServiceSuite) TestPayCancelledOrder() {
 
 	s.orderRepository.EXPECT().Get(mock.Anything, "order-1").Return(order, nil)
 
-	_, err := s.service.Pay(s.ctx, "order-1", model.PaymentMethodCard)
+	_, err := s.service.Pay(s.T().Context(), "order-1", model.PaymentMethodCard)
 
 	s.Require().ErrorIs(err, model.ErrOrderCancelled)
 }
@@ -88,7 +88,7 @@ func (s *ServiceSuite) TestPayPaymentUnavailable() {
 
 	// Update не настроен: платёж не прошёл — статус менять нельзя.
 
-	_, err := s.service.Pay(s.ctx, "order-1", model.PaymentMethodCard)
+	_, err := s.service.Pay(s.T().Context(), "order-1", model.PaymentMethodCard)
 
 	s.Require().ErrorIs(err, model.ErrPaymentUnavailable)
 }
@@ -101,7 +101,7 @@ func (s *ServiceSuite) TestPayUpdateError() {
 		Return("tx-123", nil)
 	s.orderRepository.EXPECT().Update(mock.Anything, mock.Anything).Return(repoErr)
 
-	_, err := s.service.Pay(s.ctx, "order-1", model.PaymentMethodCard)
+	_, err := s.service.Pay(s.T().Context(), "order-1", model.PaymentMethodCard)
 
 	s.Require().ErrorIs(err, repoErr)
 }

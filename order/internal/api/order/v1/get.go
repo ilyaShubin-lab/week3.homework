@@ -1,11 +1,12 @@
 package v1
 
 import (
+	"context"
+	"errors"
+
 	"boilerplates/order/internal/converter"
 	"boilerplates/order/internal/model"
 	orderV1 "boilerplates/shared/pkg/openapi/order/v1"
-	"context"
-	"errors"
 )
 
 func (a *api) GetOrder(ctx context.Context, params orderV1.GetOrderParams) (orderV1.GetOrderRes, error) {

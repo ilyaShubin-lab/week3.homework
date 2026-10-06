@@ -1,9 +1,9 @@
 package order
 
 import (
-	"boilerplates/order/internal/model"
 	"context"
 
+	"boilerplates/order/internal/model"
 	"github.com/google/uuid"
 )
 

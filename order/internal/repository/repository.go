@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"boilerplates/order/internal/model"
 	"context"
+
+	"boilerplates/order/internal/model"
 )
 
 type OrderRepository interface {

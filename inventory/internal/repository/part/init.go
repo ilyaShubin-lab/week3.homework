@@ -1,11 +1,11 @@
 package part
 
 import (
-	repoModel "boilerplates/inventory/internal/repository/model"
 	"context"
 	"fmt"
 	"time"
 
+	repoModel "boilerplates/inventory/internal/repository/model"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -79,5 +79,4 @@ func (r *repository) InitParts(ctx context.Context) error {
 		return fmt.Errorf("insert parts: %w", err)
 	}
 	return nil
-
 }

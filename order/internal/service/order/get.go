@@ -1,8 +1,9 @@
 package order
 
 import (
-	"boilerplates/order/internal/model"
 	"context"
+
+	"boilerplates/order/internal/model"
 )
 
 func (s *service) Get(ctx context.Context, orderUUID string) (model.Order, error) {

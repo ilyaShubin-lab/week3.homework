@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"boilerplates/inventory/internal/converter"
-	inventoryv1 "boilerplates/shared/pkg/proto/inventory/v1"
 	"context"
 
+	"boilerplates/inventory/internal/converter"
+	inventoryv1 "boilerplates/shared/pkg/proto/inventory/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -13,7 +13,6 @@ func (a *api) ListParts(
 	ctx context.Context,
 	req *inventoryv1.ListPartsRequest,
 ) (*inventoryv1.ListPartsResponse, error) {
-
 	parts, err := a.partService.List(ctx, converter.PartsFilterToModel(req.GetFilter()))
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal error")
@@ -22,5 +21,4 @@ func (a *api) ListParts(
 	return &inventoryv1.ListPartsResponse{
 		Parts: converter.PartsListToProto(parts),
 	}, nil
-
 }

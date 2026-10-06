@@ -1,12 +1,12 @@
 package main
 
 import (
-	paymentv1API "boilerplates/payment/internal/api/payment/v1"
-	paymentService "boilerplates/payment/internal/service/payment"
-	paymentv1 "boilerplates/shared/pkg/proto/payment/v1"
 	"log"
 	"net"
 
+	paymentv1API "boilerplates/payment/internal/api/payment/v1"
+	paymentService "boilerplates/payment/internal/service/payment"
+	paymentv1 "boilerplates/shared/pkg/proto/payment/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )

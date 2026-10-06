@@ -1,10 +1,11 @@
 package v1
 
 import (
+	"context"
+
 	"boilerplates/order/internal/client/converter"
 	"boilerplates/order/internal/model"
 	paymentV1 "boilerplates/shared/pkg/proto/payment/v1"
-	"context"
 )
 
 func (c *client) PayOrder(ctx context.Context, orderUUID, userUUID string, method model.PaymentMethod) (string, error) {

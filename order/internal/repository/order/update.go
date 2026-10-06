@@ -1,11 +1,11 @@
 package order
 
 import (
-	"boilerplates/order/internal/model"
-	"boilerplates/order/internal/repository/converter"
+	"context"
 	"fmt"
 
-	"context"
+	"boilerplates/order/internal/model"
+	"boilerplates/order/internal/repository/converter"
 )
 
 func (r *repository) Update(ctx context.Context, order model.Order) error {
@@ -25,7 +25,6 @@ func (r *repository) Update(ctx context.Context, order model.Order) error {
 		repoOrder.TransactionUUID,
 		repoOrder.PaymentMethod,
 	)
-
 	if err != nil {
 		return fmt.Errorf("update order: %w", err)
 	}

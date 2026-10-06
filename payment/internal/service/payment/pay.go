@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"boilerplates/payment/internal/model"
-
 	"github.com/google/uuid"
 )
 

@@ -1,9 +1,10 @@
 package v1
 
 import (
-	orderV1 "boilerplates/shared/pkg/openapi/order/v1"
 	"context"
 	"net/http"
+
+	orderV1 "boilerplates/shared/pkg/openapi/order/v1"
 )
 
 func (a *api) NewError(ctx context.Context, err error) *orderV1.GenericErrorStatusCode {

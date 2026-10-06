@@ -3,9 +3,8 @@ package part
 // имя папки
 
 import (
-	"go.mongodb.org/mongo-driver/mongo"
-
 	def "boilerplates/inventory/internal/repository"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Компилятор проверит, что все методы интерфейса на месте

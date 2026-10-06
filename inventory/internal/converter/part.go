@@ -5,7 +5,6 @@ import (
 
 	"boilerplates/inventory/internal/model"
 	inventoryV1 "boilerplates/shared/pkg/proto/inventory/v1"
-
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -110,7 +109,6 @@ func valueToProto(v model.Value) *inventoryV1.Value {
 }
 
 func PartsListToProto(parts []model.Part) []*inventoryV1.Part {
-
 	result := make([]*inventoryV1.Part, 0, len(parts))
 
 	for _, val := range parts {
@@ -118,11 +116,9 @@ func PartsListToProto(parts []model.Part) []*inventoryV1.Part {
 	}
 
 	return result
-
 }
 
 func PartsFilterToModel(filter *inventoryV1.PartsFilter) model.PartsFilter {
-
 	if filter == nil {
 		return model.PartsFilter{}
 	}

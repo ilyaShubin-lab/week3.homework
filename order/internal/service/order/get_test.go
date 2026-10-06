@@ -2,7 +2,6 @@ package order
 
 import (
 	"boilerplates/order/internal/model"
-
 	"github.com/stretchr/testify/mock"
 )
 
@@ -19,7 +18,7 @@ func (s *ServiceSuite) TestGetSuccess() {
 		Get(mock.Anything, "order-1").
 		Return(expected, nil)
 
-	order, err := s.service.Get(s.ctx, "order-1")
+	order, err := s.service.Get(s.T().Context(), "order-1")
 
 	s.Require().NoError(err)
 	s.Require().Equal(expected, order)
@@ -30,7 +29,7 @@ func (s *ServiceSuite) TestGetNotFound() {
 		Get(mock.Anything, "unknown").
 		Return(model.Order{}, model.ErrOrderNotFound)
 
-	_, err := s.service.Get(s.ctx, "unknown")
+	_, err := s.service.Get(s.T().Context(), "unknown")
 
 	s.Require().ErrorIs(err, model.ErrOrderNotFound)
 }

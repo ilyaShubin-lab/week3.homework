@@ -1,20 +1,17 @@
 package order
 
 import (
-	"boilerplates/order/internal/model"
-	"boilerplates/order/internal/repository/converter"
+	"context"
 	"errors"
 	"fmt"
 
-	//"boilerplates/order/internal/repository/model"
+	"boilerplates/order/internal/model"
+	"boilerplates/order/internal/repository/converter"
 	repoModel "boilerplates/order/internal/repository/model"
-	"context"
-
 	"github.com/jackc/pgx/v5"
 )
 
 func (r *repository) Get(ctx context.Context, orderUUID string) (model.Order, error) {
-
 	const query = `
 		SELECT order_uuid, user_uuid, part_uuids, total_price,
 		       transaction_uuid, payment_method, status

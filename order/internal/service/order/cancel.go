@@ -1,12 +1,12 @@
 package order
 
 import (
-	"boilerplates/order/internal/model"
 	"context"
+
+	"boilerplates/order/internal/model"
 )
 
 func (s *service) Cancel(ctx context.Context, orderUUID string) error {
-
 	order, err := s.orderRepository.Get(ctx, orderUUID)
 	if err != nil {
 		return err

@@ -1,14 +1,13 @@
 package part
 
 import (
-	"boilerplates/inventory/internal/model"
 	"errors"
 
+	"boilerplates/inventory/internal/model"
 	"github.com/stretchr/testify/mock"
 )
 
 func (s *ServiceSuite) TestListSucces() {
-
 	filter := model.PartsFilter{
 		UUIDs:      []string{"part-1", "part-2"},
 		Categories: []model.Category{model.CategoryEngine},
@@ -20,10 +19,10 @@ func (s *ServiceSuite) TestListSucces() {
 	}
 
 	s.partRepository.EXPECT().
-		List(s.ctx, filter).
+		List(s.T().Context(), filter).
 		Return(expected, nil)
 
-	parts, err := s.service.List(s.ctx, filter)
+	parts, err := s.service.List(s.T().Context(), filter)
 
 	s.Require().NoError(err)
 	s.Require().Equal(expected, parts)
@@ -36,7 +35,7 @@ func (s *ServiceSuite) TestListEmpty() {
 	s.partRepository.EXPECT().
 		List(mock.Anything, filter).
 		Return(expected, nil)
-	parts, err := s.service.List(s.ctx, filter)
+	parts, err := s.service.List(s.T().Context(), filter)
 
 	s.Require().NoError(err)
 	s.Require().Empty(parts)
@@ -50,7 +49,7 @@ func (s *ServiceSuite) TestListRepoError() {
 		List(mock.Anything, filter).
 		Return(nil, repoError)
 
-	parts, err := s.service.List(s.ctx, filter)
+	parts, err := s.service.List(s.T().Context(), filter)
 
 	s.Require().Error(err, repoError)
 	s.Require().Nil(parts)

@@ -1,17 +1,17 @@
 package part
 
 import (
+	"context"
+	"fmt"
+	"log"
+
 	"boilerplates/inventory/internal/model"
 	"boilerplates/inventory/internal/repository/converter"
 	repoModel "boilerplates/inventory/internal/repository/model"
-	"context"
-	"fmt"
-
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func (r *repository) List(ctx context.Context, filter model.PartsFilter) ([]model.Part, error) {
-
 	query := buildFilter(filter)
 
 	cursor, err := r.collection.Find(ctx, query)
@@ -20,7 +20,9 @@ func (r *repository) List(ctx context.Context, filter model.PartsFilter) ([]mode
 	}
 
 	defer func() {
-		_ = cursor.Close(ctx)
+		if closeErr := cursor.Close(ctx); closeErr != nil {
+			log.Printf("close mongo cursor: %v", closeErr)
+		}
 	}()
 
 	var parts []repoModel.Part
@@ -38,7 +40,6 @@ func (r *repository) List(ctx context.Context, filter model.PartsFilter) ([]mode
 }
 
 func buildFilter(f model.PartsFilter) bson.M {
-
 	query := bson.M{}
 
 	if len(f.UUIDs) > 0 {

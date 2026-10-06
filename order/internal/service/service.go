@@ -1,8 +1,9 @@
 package service
 
 import (
-	"boilerplates/order/internal/model"
 	"context"
+
+	"boilerplates/order/internal/model"
 )
 
 type OrderService interface {

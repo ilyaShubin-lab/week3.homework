@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"boilerplates/inventory/internal/model"
 	"context"
+
+	"boilerplates/inventory/internal/model"
 )
 
 type PartRepository interface {
